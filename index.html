@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rabbit Kanban</title>
+
+  <!-- Bootstrap 5.3 CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
+        crossorigin="anonymous">
+
+  <!-- カスタムCSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container-fluid">
+    <!-- メッセージ表示エリア: Bootstrap Alertを動的に追加する領域 -->
+    <!-- 画面上部中央に固定表示、最大幅500px、最前面に表示（z-index: 9999） -->
+    <div id="message-area" class="position-fixed top-0 start-50 translate-middle-x p-3"
+         style="z-index: 9999; max-width: 500px;">
+      <!-- メッセージがここに動的に追加される（Task 4で実装） -->
+    </div>
+
+    <!-- ヘッダー -->
+    <div class="py-4">
+      <h1 class="text-center mb-4">Rabbit Kanban</h1>
+
+      <!-- 3カラムレイアウト -->
+      <!-- Bootstrapグリッドシステム: col-12（スマホ）で縦積み、col-md-4（タブレット以上）で横並び -->
+      <!-- g-3: カラム間のギャップ（gutter）を設定 -->
+      <div class="row g-3">
+
+        <!-- To Do カラム -->
+        <div class="col-12 col-md-4">
+          <div class="card">
+            <!-- カラムヘッダー: プライマリカラー（青）、タイトルと追加ボタンを横並び配置 -->
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+              <h5 class="mb-0">To Do</h5>
+              <!-- カード追加ボタン: data-column-id属性でこのカラムを識別（Task 4でイベント処理実装） -->
+              <button class="btn btn-sm btn-light add-card-btn" data-column-id="todo">＋追加</button>
+            </div>
+            <!-- カードリスト領域: data-column-id属性でこのカラムを識別、JavaScriptでカードを追加 -->
+            <div class="card-body card-list" data-column-id="todo">
+              <!-- ダミーカード1 -->
+              <div class="card mb-2 kanban-card" draggable="true">
+                <div class="card-body p-2">
+                  <p class="card-content mb-2 small">ダミータスク1: デザインを確認する</p>
+                  <div class="d-flex justify-content-end gap-1">
+                    <!-- 編集ボタン: Iconifyのアイコン使用（Task 6で実装） -->
+                    <button class="btn btn-sm btn-outline-secondary edit-btn" aria-label="編集">
+                      <span class="iconify" data-icon="lucide:edit" data-width="16" data-height="16"></span>
+                    </button>
+                    <!-- 削除ボタン: Iconifyのアイコン使用（Task 6で実装） -->
+                    <button class="btn btn-sm btn-outline-danger delete-btn" aria-label="削除">
+                      <span class="iconify" data-icon="lucide:trash-2" data-width="16" data-height="16"></span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ダミーカード2 -->
+              <div class="card mb-2 kanban-card" draggable="true">
+                <div class="card-body p-2">
+                  <p class="card-content mb-2 small">ダミータスク2: レイアウトを確認する</p>
+                  <div class="d-flex justify-content-end gap-1">
+                    <button class="btn btn-sm btn-outline-secondary edit-btn" aria-label="編集">
+                      <span class="iconify" data-icon="lucide:edit" data-width="16" data-height="16"></span>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger delete-btn" aria-label="削除">
+                      <span class="iconify" data-icon="lucide:trash-2" data-width="16" data-height="16"></span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- In Progress カラム -->
+        <div class="col-12 col-md-4">
+          <div class="card">
+            <!-- カラムヘッダー: 警告カラー（黄）、タイトルと追加ボタンを横並び配置 -->
+            <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+              <h5 class="mb-0">In Progress</h5>
+              <button class="btn btn-sm btn-dark add-card-btn" data-column-id="inprogress">＋追加</button>
+            </div>
+            <div class="card-body card-list" data-column-id="inprogress">
+              <!-- ダミーカード3 -->
+              <div class="card mb-2 kanban-card" draggable="true">
+                <div class="card-body p-2">
+                  <p class="card-content mb-2 small">ダミータスク3: 実装を進める</p>
+                  <div class="d-flex justify-content-end gap-1">
+                    <button class="btn btn-sm btn-outline-secondary edit-btn" aria-label="編集">
+                      <span class="iconify" data-icon="lucide:edit" data-width="16" data-height="16"></span>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger delete-btn" aria-label="削除">
+                      <span class="iconify" data-icon="lucide:trash-2" data-width="16" data-height="16"></span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Done カラム -->
+        <div class="col-12 col-md-4">
+          <div class="card">
+            <!-- カラムヘッダー: 成功カラー（緑）、タイトルと追加ボタンを横並び配置 -->
+            <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+              <h5 class="mb-0">Done</h5>
+              <button class="btn btn-sm btn-light add-card-btn" data-column-id="done">＋追加</button>
+            </div>
+            <div class="card-body card-list" data-column-id="done">
+              <!-- ダミーカード4 -->
+              <div class="card mb-2 kanban-card" draggable="true">
+                <div class="card-body p-2">
+                  <p class="card-content mb-2 small">ダミータスク4: テストを完了する</p>
+                  <div class="d-flex justify-content-end gap-1">
+                    <button class="btn btn-sm btn-outline-secondary edit-btn" aria-label="編集">
+                      <span class="iconify" data-icon="lucide:edit" data-width="16" data-height="16"></span>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger delete-btn" aria-label="削除">
+                      <span class="iconify" data-icon="lucide:trash-2" data-width="16" data-height="16"></span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ダミーカード5 -->
+              <div class="card mb-2 kanban-card" draggable="true">
+                <div class="card-body p-2">
+                  <p class="card-content mb-2 small">ダミータスク5: デプロイする</p>
+                  <div class="d-flex justify-content-end gap-1">
+                    <button class="btn btn-sm btn-outline-secondary edit-btn" aria-label="編集">
+                      <span class="iconify" data-icon="lucide:edit" data-width="16" data-height="16"></span>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger delete-btn" aria-label="削除">
+                      <span class="iconify" data-icon="lucide:trash-2" data-width="16" data-height="16"></span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- カードテンプレート -->
+  <!-- JavaScriptでcloneNode()を使ってカードを動的に生成する際のテンプレート -->
+  <!-- <template>内の要素はブラウザに表示されない -->
+  <template id="card-template">
+    <div class="card mb-2 kanban-card" draggable="true">
+      <div class="card-body p-2">
+        <!-- カード内容: JavaScriptでtextContentを設定（XSS対策） -->
+        <p class="card-content mb-2 small"></p>
+        <div class="d-flex justify-content-end gap-1">
+          <!-- 編集ボタン -->
+          <button class="btn btn-sm btn-outline-secondary edit-btn" aria-label="編集">
+            <span class="iconify" data-icon="lucide:edit" data-width="16" data-height="16"></span>
+          </button>
+          <!-- 削除ボタン -->
+          <button class="btn btn-sm btn-outline-danger delete-btn" aria-label="削除">
+            <span class="iconify" data-icon="lucide:trash-2" data-width="16" data-height="16"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <!-- カード追加・編集用モーダル -->
+  <div class="modal fade" id="cardModal" tabindex="-1" aria-labelledby="cardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <!-- モーダルヘッダー -->
+        <div class="modal-header">
+          <!-- モーダルタイトル: JavaScriptで「カードを追加」or「カードを編集」に変更（Task 4で実装） -->
+          <h5 class="modal-title" id="cardModalLabel">カードを追加</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <!-- モーダルボディ -->
+        <div class="modal-body">
+          <form id="cardForm">
+            <div class="mb-3">
+              <label for="cardInput" class="form-label">タスク内容</label>
+              <!-- タスク内容入力欄: maxlength="500"で文字数制限、requiredで必須入力 -->
+              <textarea class="form-control" id="cardInput" rows="3" maxlength="500" required></textarea>
+              <div class="form-text">最大500文字</div>
+            </div>
+          </form>
+        </div>
+
+        <!-- モーダルフッター -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+          <!-- 保存ボタン: form属性でcardFormと関連付け（Task 4でイベント処理実装） -->
+          <button type="submit" form="cardForm" class="btn btn-primary" id="modalSaveBtn">保存</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap 5.3 JS CDN -->
+  <!-- モーダル、ドロップダウンなどのBootstrap機能を使用可能にする -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+          crossorigin="anonymous"></script>
+
+  <!-- Iconify -->
+  <!-- SVGアイコンをインラインで表示するライブラリ -->
+  <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+
+  <!-- Kanban App JavaScript -->
+  <!-- 読み込み順序が重要: constants → storage → data-manager -->
+  <!-- constants.js: 他のファイルで使用する定数を定義（STORAGE_KEY, COLUMNS） -->
+  <script src="js/constants.js"></script>
+  <!-- storage.js: localStorage操作（STORAGE_KEYを使用） -->
+  <script src="js/storage.js"></script>
+  <!-- data-manager.js: データ管理（COLUMNSを使用、loadFromStorage/saveToStorageを呼び出す） -->
+  <script src="js/data-manager.js"></script>
+</body>
+</html>
