@@ -79,17 +79,17 @@
 
 **番号**: #3
 
-- [ ] `js/data-manager.js` に追加
-  - [ ] `addCard(content, columnId)` 実装
+- [x] `js/data-manager.js` に追加
+  - [x] `addCard(content, columnId)` 実装
     - バリデーション（空文字、500文字制限）
     - カードオブジェクト作成
     - `cardsData.push(card)`
     - `saveToStorage(cardsData)` 呼び出し
     - エラーは `throw new Error()` で投げる
-- [ ] **動作確認**: コンソールで `addCard('テスト1', 'todo')` を実行
-- [ ] **動作確認**: コンソールで `addCard('テスト2', 'inprogress')` を実行
-- [ ] **動作確認**: localStorage を開いて `kanban_data` にデータが保存されている
-- [ ] **動作確認**: ページリロードして `cardsData` にデータが残っている
+- [x] **動作確認**: コンソールで `addCard('テスト1', 'todo')` を実行
+- [x] **動作確認**: コンソールで `addCard('テスト2', 'inprogress')` を実行
+- [x] **動作確認**: localStorage を開いて `kanban_data` にデータが保存されている
+- [x] **動作確認**: ページリロードして `cardsData` にデータが残っている
 
 **完了条件**: カードがlocalStorageに保存される
 
