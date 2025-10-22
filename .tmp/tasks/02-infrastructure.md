@@ -261,7 +261,7 @@ function generateCardId() {
   // Date.now()で現在のタイムスタンプを取得
   // Math.random()でランダムな数値を生成
   // toString(36)で36進数文字列に変換（0-9, a-z）
-  // substr(2, 9)で先頭2文字（"0."）を削除し、9文字取得
+  // slice(2, 11)で先頭2文字（"0."）を削除し、9文字取得
   // フォーマット: "card-1634567890123-abc123def"
   // 戻り値: ユニークなID文字列
 }
@@ -273,7 +273,7 @@ function generateCardId() {
 
 **実装の考え方**:
 1. `Date.now()` でタイムスタンプ取得
-2. `Math.random().toString(36).substr(2, 9)` でランダム文字列生成
+2. `Math.random().toString(36).slice(2, 11)` でランダム文字列生成
 3. `"card-{timestamp}-{random}"` のフォーマットで結合
 
 **注意**:

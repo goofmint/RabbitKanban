@@ -57,7 +57,7 @@ function initializeData() {
  * 1. Date.now() で現在のタイムスタンプを取得（ミリ秒単位）
  * 2. Math.random() でランダムな数値を生成（0.0 ～ 1.0）
  * 3. toString(36) で36進数文字列に変換（0-9, a-z の36文字を使用）
- * 4. substr(2, 9) で先頭2文字（"0."）を削除し、9文字取得
+ * 4. slice(2, 11) で先頭2文字（"0."）を削除し、9文字取得
  * 5. "card-{timestamp}-{random}" のフォーマットで結合
  *
  * @returns {string} 生成されたカードID（例: "card-1634567890123-abc123def"）
@@ -66,7 +66,7 @@ function initializeData() {
  * - Date.now() → 1634567890123
  * - Math.random() → 0.123456789
  * - Math.random().toString(36) → "0.4fzyo82mvyr"
- * - Math.random().toString(36).substr(2, 9) → "4fzyo82mv"
+ * - Math.random().toString(36).slice(2, 11) → "4fzyo82mv"
  * - 最終結果: "card-1634567890123-4fzyo82mv"
  *
  * 使用例:
@@ -84,8 +84,8 @@ function generateCardId() {
   // ランダムな文字列を生成（9文字）
   // Math.random() → 0.123456789
   // .toString(36) → "0.4fzyo82mvyr"（36進数文字列）
-  // .substr(2, 9) → "4fzyo82mv"（先頭の "0." を削除し、9文字取得）
-  const randomString = Math.random().toString(36).substr(2, 9);
+  // .slice(2, 11) → "4fzyo82mv"（先頭の "0." を削除し、9文字取得）
+  const randomString = Math.random().toString(36).slice(2, 11);
 
   // "card-{timestamp}-{random}" のフォーマットで結合
   return `card-${timestamp}-${randomString}`;
