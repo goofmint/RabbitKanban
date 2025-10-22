@@ -162,17 +162,23 @@ function isValidColumnId(columnId) {
  * - このタスク（Task 3）ではコンソールから呼び出すため、エラーはコンソールに表示される
  */
 function addCard(content, columnId) {
+  // 前処理: trim()で前後の空白を削除
+  // バリデーションと保存で同じ値を使用するため、最初に計算する
+  // これにより、バリデーションと実際に保存される内容が一致する
+  const trimmedContent = content ? content.trim() : '';
+
   // 1. バリデーション（空文字チェック）
   // contentがnull、undefined、空文字、または空白文字のみの場合はエラー
-  // trim()で前後の空白を削除してから長さをチェック
-  if (!content || content.trim().length === 0) {
+  // trim後の文字列でチェックすることで、実際に保存される内容と一致させる
+  if (!content || trimmedContent.length === 0) {
     throw new Error('カードの内容を入力してください');
   }
 
   // 2. バリデーション（500文字制限チェック）
-  // カード内容が500文字を超える場合はエラー
-  // HTML側の maxlength="500" と一致させる
-  if (content.length > 500) {
+  // trim後の文字列の長さでチェック
+  // これにより、実際に保存される内容が500文字以内であることを保証
+  // 例: "  abc  " (7文字) → "abc" (3文字) として保存されるので、trim後の3文字でチェック
+  if (trimmedContent.length > 500) {
     throw new Error('カードの内容は500文字以内で入力してください');
   }
 
@@ -189,13 +195,13 @@ function addCard(content, columnId) {
 
   // カードオブジェクトを作成
   // - id: generateCardId()でユニークなIDを生成（Task 2で実装済み）
-  // - content: trim()で前後の空白を削除して保存
+  // - content: trimmedContent を使用（バリデーションと同じ値）
   // - columnId: 追加先のカラムID
   // - createdAt: 作成日時（Unixタイムスタンプ、ミリ秒単位）
   // - updatedAt: 更新日時（作成時は createdAt と同じ値）
   const card = {
     id: generateCardId(),
-    content: content.trim(),
+    content: trimmedContent,
     columnId: columnId,
     createdAt: now,
     updatedAt: now
