@@ -117,3 +117,105 @@ function isValidColumnId(columnId) {
   // some() は条件に一致する要素が1つでもあれば true を返す
   return COLUMNS.some(col => col.id === columnId);
 }
+
+/**
+ * カードを追加する
+ * バリデーションを行い、カードオブジェクトを作成してcardsDataに追加し、localStorageに保存する
+ *
+ * 実装フロー:
+ * 1. バリデーション（空文字チェック）
+ * 2. バリデーション（500文字制限チェック）
+ * 3. バリデーション（カラムIDチェック）
+ * 4. カードオブジェクトを作成
+ * 5. cardsData.push(card) でメモリ上の配列に追加
+ * 6. saveToStorage(cardsData) でlocalStorageに保存
+ *
+ * @param {string} content - カードの内容（タスク内容）
+ * @param {string} columnId - 追加先のカラムID（"todo" | "inprogress" | "done"）
+ * @throws {Error} バリデーションエラーまたは保存エラー
+ *
+ * カードオブジェクトの構造:
+ * {
+ *   id: "card-1634567890123-abc123def",  // generateCardId()で生成
+ *   content: "タスクの内容",               // trim()で前後の空白削除
+ *   columnId: "todo",                     // 追加先のカラムID
+ *   createdAt: 1634567890123,            // 作成日時（Unixタイムスタンプ）
+ *   updatedAt: 1634567890123             // 更新日時（作成時は同じ値）
+ * }
+ *
+ * 使用例:
+ * try {
+ *   addCard('新しいタスク', 'todo');
+ *   console.log('カード追加成功');
+ * } catch (error) {
+ *   console.error('カード追加失敗:', error.message);
+ * }
+ *
+ * エラー例:
+ * - Error: カードの内容を入力してください（空文字の場合）
+ * - Error: カードの内容は500文字以内で入力してください（500文字超過の場合）
+ * - Error: カラムIDが不正です（不正なカラムIDの場合）
+ *
+ * 注意:
+ * - この関数は例外を投げる可能性がある（バリデーションエラー、localStorage保存エラー）
+ * - 呼び出し側でtry-catchでエラーハンドリングを行うこと（Task 4で実装）
+ * - このタスク（Task 3）ではコンソールから呼び出すため、エラーはコンソールに表示される
+ */
+function addCard(content, columnId) {
+  // 前処理: trim()で前後の空白を削除
+  // バリデーションと保存で同じ値を使用するため、最初に計算する
+  // これにより、バリデーションと実際に保存される内容が一致する
+  const trimmedContent = content ? content.trim() : '';
+
+  // 1. バリデーション（空文字チェック）
+  // contentがnull、undefined、空文字、または空白文字のみの場合はエラー
+  // trim後の文字列でチェックすることで、実際に保存される内容と一致させる
+  if (!content || trimmedContent.length === 0) {
+    throw new Error('カードの内容を入力してください');
+  }
+
+  // 2. バリデーション（500文字制限チェック）
+  // trim後の文字列の長さでチェック
+  // これにより、実際に保存される内容が500文字以内であることを保証
+  // 例: "  abc  " (7文字) → "abc" (3文字) として保存されるので、trim後の3文字でチェック
+  if (trimmedContent.length > 500) {
+    throw new Error('カードの内容は500文字以内で入力してください');
+  }
+
+  // 3. バリデーション（カラムIDチェック）
+  // COLUMNS配列に定義されているIDのみ有効
+  // isValidColumnId() はTask 2で実装済み
+  if (!isValidColumnId(columnId)) {
+    throw new Error('カラムIDが不正です');
+  }
+
+  // 4. カードオブジェクトを作成
+  // 現在のタイムスタンプを取得（作成日時と更新日時の両方に使用）
+  const now = Date.now();
+
+  // カードオブジェクトを作成
+  // - id: generateCardId()でユニークなIDを生成（Task 2で実装済み）
+  // - content: trimmedContent を使用（バリデーションと同じ値）
+  // - columnId: 追加先のカラムID
+  // - createdAt: 作成日時（Unixタイムスタンプ、ミリ秒単位）
+  // - updatedAt: 更新日時（作成時は createdAt と同じ値）
+  const card = {
+    id: generateCardId(),
+    content: trimmedContent,
+    columnId: columnId,
+    createdAt: now,
+    updatedAt: now
+  };
+
+  // 5. cardsData.push(card) でメモリ上の配列に追加
+  // push()メソッドで配列の末尾に追加
+  cardsData.push(card);
+
+  // 6. saveToStorage(cardsData) でlocalStorageに保存
+  // saveToStorage() はTask 2で実装済み
+  // localStorage容量制限超過時は例外が発生する（そのまま投げる）
+  saveToStorage(cardsData);
+
+  // 正常に追加・保存された場合、何も返さない（undefinedを返す）
+  // エラーが発生した場合は、上記のthrow文で例外を投げる
+}
