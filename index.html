@@ -215,5 +215,14 @@
   <!-- Iconify -->
   <!-- SVGアイコンをインラインで表示するライブラリ -->
   <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+
+  <!-- Kanban App JavaScript -->
+  <!-- 読み込み順序が重要: constants → storage → data-manager -->
+  <!-- constants.js: 他のファイルで使用する定数を定義（STORAGE_KEY, COLUMNS） -->
+  <script src="js/constants.js"></script>
+  <!-- storage.js: localStorage操作（STORAGE_KEYを使用） -->
+  <script src="js/storage.js"></script>
+  <!-- data-manager.js: データ管理（COLUMNSを使用、loadFromStorage/saveToStorageを呼び出す） -->
+  <script src="js/data-manager.js"></script>
 </body>
 </html>

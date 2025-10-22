@@ -48,22 +48,22 @@
 
 **番号**: #2
 
-- [ ] `js/` ディレクトリを作成
-- [ ] `js/constants.js` を作成
-  - [ ] `STORAGE_KEY = 'kanban_data'` 定義
-  - [ ] `COLUMNS` 配列定義
-- [ ] `js/storage.js` を作成
-  - [ ] `isStorageAvailable()` 実装
-  - [ ] `loadFromStorage()` 実装
-  - [ ] `saveToStorage(cards)` 実装
-- [ ] `js/data-manager.js` を作成
-  - [ ] `cardsData = []` 内部state定義
-  - [ ] `initializeData()` 実装（loadFromStorageを呼ぶだけ）
-  - [ ] `generateCardId()` 実装
-  - [ ] `isValidColumnId(columnId)` 実装
-- [ ] `index.html` に `<script>` タグを追加（constants, storage, data-manager）
-- [ ] **動作確認**: コンソールで `isStorageAvailable()` を実行してtrueが返る
-- [ ] **動作確認**: コンソールで `initializeData()` を実行してエラーが出ない
+- [x] `js/` ディレクトリを作成
+- [x] `js/constants.js` を作成
+  - [x] `STORAGE_KEY = 'kanban_data'` 定義
+  - [x] `COLUMNS` 配列定義
+- [x] `js/storage.js` を作成
+  - [x] `isStorageAvailable()` 実装
+  - [x] `loadFromStorage()` 実装
+  - [x] `saveToStorage(cards)` 実装
+- [x] `js/data-manager.js` を作成
+  - [x] `cardsData = []` 内部state定義
+  - [x] `initializeData()` 実装（loadFromStorageを呼ぶだけ）
+  - [x] `generateCardId()` 実装
+  - [x] `isValidColumnId(columnId)` 実装
+- [x] `index.html` に `<script>` タグを追加（constants, storage, data-manager）
+- [x] **動作確認**: コンソールで `isStorageAvailable()` を実行してtrueが返る
+- [x] **動作確認**: コンソールで `initializeData()` を実行してエラーが出ない
 
 **完了条件**: 基礎インフラが動作する
 
