@@ -84,21 +84,22 @@ function setupModalFormListener() {
 
 /**
  * モーダルのフォーム送信を処理する
- * 現時点ではaddモードのみ対応（editモードはTask 5で実装）
+ * addモードとeditモードの両方に対応
  *
  * 実装フロー:
  * 1. getModalInput() で入力内容を取得
  * 2. getModalMode() でモードを取得
  * 3. モードが'add'の場合、handleAddCard(content)を呼び出す
- * 4. モードが'edit'の場合、何もしない（Task 5で実装）
+ * 4. モードが'edit'の場合、handleEditCard(content)を呼び出す
  *
  * 使用例:
  * handleModalSubmit();
- * // モーダルの内容に応じてカードを追加
+ * // モーダルの内容に応じてカードを追加または編集
  *
  * 注意:
  * - モードに応じて処理を分岐
- * - editモードはTask 5で実装するため、現時点では何もしない
+ * - addモード: 新規カード追加（Task 4で実装済み）
+ * - editモード: 既存カード編集（Task 5で実装）
  */
 function handleModalSubmit() {
   // 1. getModalInput() で入力内容を取得
@@ -114,9 +115,9 @@ function handleModalSubmit() {
     // カード追加処理を実行
     handleAddCard(content);
   } else if (mode === 'edit') {
-    // 4. モードが'edit'の場合、何もしない（Task 5で実装）
-    // Task 5でhandleEditCard(content)を呼び出す
-    // handleEditCard(content);
+    // 4. モードが'edit'の場合、handleEditCard(content)を呼び出す
+    // カード編集処理を実行（Task 5で実装）
+    handleEditCard(content);
   }
 }
 
@@ -194,6 +195,96 @@ function handleAddCard(content) {
 }
 
 /**
+ * カード編集処理を実行する
+ * try-catchでエラーハンドリングを行い、成功/失敗メッセージを表示する
+ *
+ * @param {string} newContent - 編集後のカード内容
+ *
+ * 実装フロー:
+ * 1. getCurrentCardId()で編集対象のカードIDを取得
+ * 2. カードIDがnullの場合、エラーメッセージを表示して早期リターン
+ * 3. try-catch でエラーハンドリング
+ * 4. try内:
+ *    - updateCard(cardId, newContent)を呼び出してカードを更新し、更新されたカードオブジェクトを取得
+ *    - 更新されたカードのcolumnIdを使用してrenderColumnCards(columnId)でカラムを再描画
+ *    - closeModal()でモーダルを閉じる
+ *    - showMessage('カードを更新しました', 'success')で成功メッセージ表示
+ * 5. catch内:
+ *    - showMessage(error.message, 'danger')でエラーメッセージ表示
+ *    - モーダルは開いたまま（ユーザーが修正できるように）
+ *
+ * 使用例:
+ * handleEditCard('更新後のタスク');
+ * // カードが更新され、画面に反映される
+ *
+ * エラー例:
+ * - カードIDがnull: 「カードが選択されていません」
+ * - バリデーションエラー: 「カードの内容を入力してください」
+ * - 保存エラー: localStorage容量超過等
+ *
+ * 注意:
+ * - データ層（updateCard()）とUI層を接続
+ * - 成功時はモーダルを閉じて成功メッセージ表示
+ * - エラー時はモーダルを開いたままエラーメッセージ表示
+ * - updateCard()が更新されたカードオブジェクトを返すため、getAllCards()で再検索不要
+ * - これにより、効率的なカード再描画が可能
+ */
+function handleEditCard(newContent) {
+  // 1. getCurrentCardId()で編集対象のカードIDを取得
+  // modal.jsで定義されている関数を呼び出す
+  const cardId = getCurrentCardId();
+
+  // 2. カードIDがnullの場合、エラーメッセージを表示して早期リターン
+  // editモードではないか、カードIDが設定されていない場合に発生
+  // この状態でupdateCard()を呼ぶとnullが渡されてしまうため、早期にチェック
+  if (!cardId) {
+    // エラーメッセージを表示
+    // ui-renderer.jsで定義されている関数を呼び出す
+    showMessage('カードが選択されていません', 'danger');
+    // 処理を中断
+    return;
+  }
+
+  // 3. try-catch でエラーハンドリング
+  try {
+    // 4. try内: カード編集処理
+
+    // updateCard(cardId, newContent)を呼び出してカードを更新し、更新されたカードオブジェクトを取得
+    // data-manager.jsで定義されている関数を呼び出す
+    // この関数内でバリデーション+保存が行われる
+    // バリデーションエラーや保存エラーが発生した場合、例外が投げられる
+    // 更新されたカードオブジェクト（columnIdを含む）が返される
+    const updatedCard = updateCard(cardId, newContent);
+
+    // 更新されたカードのcolumnIdを使用してrenderColumnCards(columnId)でカラムを再描画
+    // ui-renderer.jsで定義されている関数を呼び出す
+    // 更新されたカードが画面に即座に反映される
+    // updatedCard.columnIdを使用することで、getAllCards()で再検索する必要がない（効率的）
+    renderColumnCards(updatedCard.columnId);
+
+    // closeModal()でモーダルを閉じる
+    // modal.jsで定義されている関数を呼び出す
+    closeModal();
+
+    // showMessage('カードを更新しました', 'success')で成功メッセージ表示
+    // ui-renderer.jsで定義されている関数を呼び出す
+    // 緑色のBootstrap alertが3秒間表示される
+    showMessage('カードを更新しました', 'success');
+
+  } catch (error) {
+    // 5. catch内: エラー処理
+
+    // showMessage(error.message, 'danger')でエラーメッセージ表示
+    // ui-renderer.jsで定義されている関数を呼び出す
+    // 赤色のBootstrap alertが3秒間表示される
+    showMessage(error.message, 'danger');
+
+    // モーダルは開いたまま（ユーザーが修正できるように）
+    // closeModal()は呼ばない
+  }
+}
+
+/**
  * モーダルのキャンセルボタンのクリックイベントリスナーを設定する
  * キャンセルボタンクリック時にモーダルを閉じる
  *
@@ -232,6 +323,88 @@ function setupModalCancelListener() {
 }
 
 /**
+ * カードのアクションボタン（編集・削除）のイベントリスナーを設定する
+ * イベントデリゲーションを使用して、動的に追加されるカードにも対応
+ *
+ * 実装フロー:
+ * 1. すべてのカラムコンテナ（.card-list）を取得
+ * 2. 各カラムコンテナにclickイベントリスナーを設定（イベントデリゲーション）
+ * 3. クリックされた要素またはその親が編集ボタン（.edit-btn）かチェック
+ * 4. 編集ボタンの場合:
+ *    - カード要素（.kanban-card）を取得
+ *    - data-card-id属性からカードIDを取得
+ *    - openEditModal(cardId)を呼び出してモーダルを開く
+ * 5. 削除ボタンの場合は何もしない（Task 6で実装）
+ *
+ * 使用例:
+ * setupCardActionListeners();
+ * // すべてのカードの編集ボタンにイベントリスナーが設定される
+ *
+ * 注意:
+ * - イベントデリゲーションを使用（親要素にイベントリスナーを設定）
+ * - 動的に追加されるカードにも対応できる
+ * - closest()メソッドで最も近い親要素を取得
+ * - 削除ボタン（.delete-btn）の処理はTask 6で実装
+ */
+function setupCardActionListeners() {
+  // 1. すべてのカラムコンテナ（.card-list）を取得
+  // querySelectorAll()で.card-listクラスを持つすべての要素を取得
+  const columnContainers = document.querySelectorAll('.card-list');
+
+  // 2. 各カラムコンテナにclickイベントリスナーを設定（イベントデリゲーション）
+  // forEach()で各カラムコンテナを順次処理
+  columnContainers.forEach(container => {
+    // clickイベントリスナーを設定
+    // イベントデリゲーション: 親要素にイベントリスナーを設定し、子要素のクリックをキャッチ
+    container.addEventListener('click', (event) => {
+      // クリックされた要素を取得
+      const target = event.target;
+
+      // 3. クリックされた要素またはその親が編集ボタン（.edit-btn）かチェック
+      // closest()メソッドで最も近い親要素を取得
+      // ボタン内のアイコンがクリックされた場合も、closest()で親のボタン要素を取得できる
+      const editButton = target.closest('.edit-btn');
+
+      // 4. 編集ボタンの場合の処理
+      if (editButton) {
+        // カード要素（.kanban-card）を取得
+        // closest()メソッドで最も近い親の.kanban-card要素を取得
+        const cardElement = editButton.closest('.kanban-card');
+
+        // カード要素が見つからない場合は処理を中断
+        if (!cardElement) {
+          console.error('カード要素が見つかりません');
+          return;
+        }
+
+        // data-card-id属性からカードIDを取得
+        // dataset.cardId で data-card-id 属性の値を取得
+        const cardId = cardElement.dataset.cardId;
+
+        // カードIDが取得できない場合は処理を中断
+        if (!cardId) {
+          console.error('カードIDが取得できません');
+          return;
+        }
+
+        // openEditModal(cardId)を呼び出してモーダルを開く
+        // modal.jsで定義されている関数を呼び出す
+        openEditModal(cardId);
+
+        // 処理を終了（他のイベントハンドラーに伝播しない）
+        return;
+      }
+
+      // 5. 削除ボタンの場合は何もしない（Task 6で実装）
+      // const deleteButton = target.closest('.delete-btn');
+      // if (deleteButton) {
+      //   // Task 6でhandleDeleteCard()を呼び出す
+      // }
+    });
+  });
+}
+
+/**
  * すべてのイベントリスナーを設定する
  * アプリケーション起動時に1度だけ呼ばれる
  *
@@ -246,7 +419,7 @@ function setupModalCancelListener() {
  *
  * 注意:
  * - app.jsからシンプルに呼び出せるようにする
- * - setupCardActionListeners(), setupDragAndDropListeners() は今後のタスクで追加
+ * - setupDragAndDropListeners()は今後のタスクで追加
  */
 function setupEventListeners() {
   // 以下の関数を順次呼び出す:
@@ -260,7 +433,9 @@ function setupEventListeners() {
   // モーダルのキャンセルボタンイベントリスナー設定
   setupModalCancelListener();
 
+  // カードのアクションボタン（編集・削除）のイベントリスナー設定（Task 5で実装）
+  setupCardActionListeners();
+
   // 注: 以下のイベントリスナーは今後のタスクで追加
-  // - setupCardActionListeners() (Task 5, 6で実装: 編集・削除ボタン)
   // - setupDragAndDropListeners() (Task 7で実装: D&D)
 }

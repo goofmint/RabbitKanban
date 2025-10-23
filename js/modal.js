@@ -131,11 +131,18 @@ function openAddModal(columnId) {
     textarea.value = '';
   }
 
-  // 6. modalInstance.show() でモーダルを表示
+  // 6. 保存ボタンのテキストを「保存」に設定
+  // editモードから戻った場合に「更新」になっている可能性があるため、明示的に「保存」に戻す
+  const saveButton = document.querySelector('#modalSaveBtn');
+  if (saveButton) {
+    saveButton.textContent = '保存';
+  }
+
+  // 7. modalInstance.show() でモーダルを表示
   // Bootstrap ModalのJavaScript APIを使用
   modalInstance.show();
 
-  // 7. テキストエリアにフォーカス
+  // 8. テキストエリアにフォーカス
   // モーダルが表示された後にフォーカスを設定するため、setTimeout()を使用
   // Bootstrap Modalのアニメーションが完了してからフォーカスを設定
   setTimeout(() => {
@@ -269,4 +276,103 @@ function getCurrentColumnId() {
 function getCurrentCardId() {
   // currentCardId を返す
   return currentCardId;
+}
+
+/**
+ * カード編集モードでモーダルを開く
+ * 既存カードの内容を編集するためのモーダルを表示する
+ *
+ * @param {string} cardId - 編集対象のカードID
+ *
+ * 実装フロー:
+ * 1. currentMode = 'edit' に設定
+ * 2. currentCardId = cardId に設定
+ * 3. currentColumnId = null に設定（editモードではカラムIDは不要）
+ * 4. getAllCards()を呼び出してすべてのカードデータを取得
+ * 5. 取得したカードデータからcardIdに一致するカードを検索
+ * 6. カードが見つかった場合:
+ *    - モーダルのタイトルを「カード編集」に設定
+ *    - テキストエリアにカードの現在のcontentを設定
+ *    - 保存ボタンのテキストを「更新」に設定
+ *    - modalInstance.show()でモーダルを表示
+ *    - テキストエリアにフォーカス
+ * 7. カードが見つからない場合:
+ *    - エラーをコンソールに出力して処理を中断
+ *
+ * 使用例:
+ * openEditModal('card-123-abc');
+ * // モーダルが「カード編集」モードで開く
+ *
+ * 注意:
+ * - カードの編集ボタンクリック時にevent-handler.jsから呼ばれる
+ * - カードIDを保持することで、どのカードを編集するかを判定
+ * - カードが見つからない場合は何も起こらない（エラーログのみ）
+ */
+function openEditModal(cardId) {
+  // 1. currentMode = 'edit' に設定
+  // handleModalSubmit()でこのモードを参照してupdateCard()を呼び出す
+  currentMode = 'edit';
+
+  // 2. currentCardId = cardId に設定
+  // handleEditCard()でこのIDを使用してカードを更新する
+  currentCardId = cardId;
+
+  // 3. currentColumnId = null に設定（editモードではカラムIDは不要）
+  // editモードではカードIDから直接カードを更新するため、カラムIDは不要
+  currentColumnId = null;
+
+  // 4. getAllCards()を呼び出してすべてのカードデータを取得
+  // data-manager.jsで定義されている関数を呼び出す
+  const allCards = getAllCards();
+
+  // 5. 取得したカードデータからcardIdに一致するカードを検索
+  // find()メソッドで条件に一致する最初の要素を取得
+  const card = allCards.find(c => c.id === cardId);
+
+  // カードが見つからない場合はエラーをコンソールに出力して処理を中断
+  if (!card) {
+    console.error('編集対象のカードが見つかりません:', cardId);
+    return;
+  }
+
+  // 6. カードが見つかった場合の処理
+
+  // モーダルのタイトルを「カード編集」に設定
+  // querySelector()でモーダルのタイトル要素を取得してtextContentを設定
+  const modalTitle = document.querySelector('#cardModalLabel');
+  if (modalTitle) {
+    modalTitle.textContent = 'カード編集';
+  }
+
+  // テキストエリアにカードの現在のcontentを設定
+  // querySelector()でテキストエリアを取得してvalueを設定
+  const textarea = document.querySelector('#cardInput');
+  if (textarea) {
+    // カードの現在の内容を設定
+    textarea.value = card.content;
+  }
+
+  // 保存ボタンのテキストを「更新」に設定
+  // querySelector()で保存ボタンを取得してtextContentを設定
+  const saveButton = document.querySelector('#modalSaveBtn');
+  if (saveButton) {
+    saveButton.textContent = '更新';
+  }
+
+  // modalInstance.show()でモーダルを表示
+  // Bootstrap ModalのJavaScript APIを使用
+  modalInstance.show();
+
+  // テキストエリアにフォーカス
+  // モーダルが表示された後にフォーカスを設定するため、setTimeout()を使用
+  // Bootstrap Modalのアニメーションが完了してからフォーカスを設定
+  setTimeout(() => {
+    if (textarea) {
+      // focus()メソッドでテキストエリアにフォーカス
+      textarea.focus();
+      // テキストエリアの末尾にカーソルを移動
+      // setSelectionRange()メソッドで選択範囲を末尾に設定
+      textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+    }
+  }, 200); // 200ミリ秒後にフォーカス（モーダルのアニメーションが完了するまで待つ）
 }
