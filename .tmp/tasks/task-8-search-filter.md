@@ -187,6 +187,25 @@ let activeFilter = 'all';
 
 ---
 
+#### `setupClearSearchListener()`
+
+**概要**: 検索クリアボタンのクリックイベントリスナーを設定します。
+
+**引数**: なし
+
+**戻り値**: なし
+
+**処理内容**:
+1. クリアボタンを取得（`#clearSearchBtn`）
+2. `click`イベントリスナーを設定:
+   - `setSearchKeyword('')`で検索キーワードをクリア
+   - 検索入力欄（`#searchInput`）の値を空文字列に設定
+   - `renderAllCards()`で全カラムを再描画（すべてのカードを表示）
+
+**注意**: 検索キーワードをクリアするだけでなく、入力欄の値もクリアすることでユーザー体験を向上
+
+---
+
 #### `handleSearch(keyword)`
 
 **概要**: 検索処理を実行します。
@@ -228,6 +247,7 @@ let activeFilter = 'all';
 - 既存の関数呼び出しに加えて、以下を追加:
   - `setupSearchListener()`
   - `setupFilterListeners()`
+  - `setupClearSearchListener()`
 
 ---
 
@@ -371,6 +391,7 @@ let activeFilter = 'all';
 3. `js/event-handler.js`
    - `setupSearchListener()` 関数を追加
    - `setupFilterListeners()` 関数を追加
+   - `setupClearSearchListener()` 関数を追加
    - `handleSearch(keyword)` 関数を追加
    - `handleFilter(filterId)` 関数を追加
    - `setupEventListeners()` 関数を更新
