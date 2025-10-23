@@ -156,24 +156,24 @@
 
 **番号**: #5
 
-- [ ] `js/data-manager.js` に追加
-  - [ ] `updateCard(cardId, newContent)` 実装
+- [x] `js/data-manager.js` に追加
+  - [x] `updateCard(cardId, newContent)` 実装
     - バリデーション
     - カード検索
     - 内容更新、updatedAt更新
     - `saveToStorage(cardsData)`
     - エラーは `throw new Error()`
-- [ ] `js/modal.js` に追加
-  - [ ] `openEditModal(cardId)` 実装（getAllCards→カード検索→入力欄に設定）
-  - [ ] `getCurrentCardId()` 実装
-- [ ] `js/event-handler.js` に追加
-  - [ ] `handleModalSubmit()` を更新（editモードに対応）
-  - [ ] `handleEditCard(newContent)` 実装（try-catch、updateCard + renderColumnCards + closeModal + showMessage）
-  - [ ] `setupCardActionListeners()` 実装（イベントデリゲーション、編集ボタンのみ）
-  - [ ] `setupEventListeners()` に `setupCardActionListeners()` 追加
-- [ ] **動作確認**: カードの「✏️」ボタンをクリックしてモーダルが開く
-- [ ] **動作確認**: 内容を編集して保存すると更新される
-- [ ] **動作確認**: リロード後も編集内容が保持されている
+- [x] `js/modal.js` に追加
+  - [x] `openEditModal(cardId)` 実装（getAllCards→カード検索→入力欄に設定）
+  - [x] `getCurrentCardId()` 実装
+- [x] `js/event-handler.js` に追加
+  - [x] `handleModalSubmit()` を更新（editモードに対応）
+  - [x] `handleEditCard(newContent)` 実装（try-catch、updateCard + renderColumnCards + closeModal + showMessage）
+  - [x] `setupCardActionListeners()` 実装（イベントデリゲーション、編集ボタンのみ）
+  - [x] `setupEventListeners()` に `setupCardActionListeners()` 追加
+- [x] **動作確認**: カードの「✏️」ボタンをクリックしてモーダルが開く
+- [x] **動作確認**: 内容を編集して保存すると更新される
+- [x] **動作確認**: リロード後も編集内容が保持されている
 
 **完了条件**: カード編集機能が完全に動作する
 
