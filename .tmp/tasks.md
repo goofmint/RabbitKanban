@@ -103,41 +103,41 @@
 
 **番号**: #4
 
-- [ ] `js/data-manager.js` に追加
-  - [ ] `getAllCards()` 実装
-  - [ ] `getCardsByColumn(columnId)` 実装
-- [ ] `js/ui-renderer.js` を作成
-  - [ ] `renderAllCards()` 実装（全カラムをループ）
-  - [ ] `renderColumnCards(columnId)` 実装
+- [x] `js/data-manager.js` に追加
+  - [x] `getAllCards()` 実装
+  - [x] `getCardsByColumn(columnId)` 実装
+- [x] `js/ui-renderer.js` を作成
+  - [x] `renderAllCards()` 実装（全カラムをループ）
+  - [x] `renderColumnCards(columnId)` 実装
     - `getCardsByColumn()` でデータ取得
     - DocumentFragment使用
     - `createCardElement()` でカード生成
     - カラムに追加
-  - [ ] `createCardElement(card)` 実装
+  - [x] `createCardElement(card)` 実装
     - `<template>` をclone
     - `textContent` でカード内容設定
     - data属性でID設定
-  - [ ] `showMessage(message, type)` 実装（Bootstrap alert、3秒後非表示）
-- [ ] `js/modal.js` を作成
-  - [ ] `modalInstance`, `currentMode`, `currentCardId`, `currentColumnId` 定義
-  - [ ] `initializeModal()` 実装（Bootstrap Modal初期化）
-  - [ ] `openAddModal(columnId)` 実装
-  - [ ] `closeModal()` 実装
-  - [ ] `getModalInput()` 実装
-  - [ ] `getModalMode()`, `getCurrentColumnId()` 実装
-- [ ] `js/event-handler.js` を作成
-  - [ ] `setupAddCardListeners()` 実装（「＋追加」ボタン）
-  - [ ] `setupModalFormListener()` 実装（フォーム送信）
-  - [ ] `handleModalSubmit()` 実装（addモードのみ）
-  - [ ] `handleAddCard(content)` 実装（try-catch、addCard + renderColumnCards + closeModal + showMessage）
-  - [ ] `setupModalCancelListener()` 実装
-  - [ ] `setupEventListeners()` 実装（上記を呼び出し）
-- [ ] `js/app.js` を作成
-  - [ ] IIFE構造
-  - [ ] `initializeApp()` 実装（initializeData, initializeModal, renderAllCards, setupEventListeners）
-  - [ ] `DOMContentLoaded` で初期化
-- [ ] `index.html` に `<script>` タグを追加（ui-renderer, modal, event-handler, app）
-- [ ] `index.html` からダミーカードを削除
+  - [x] `showMessage(message, type)` 実装（Bootstrap alert、3秒後非表示）
+- [x] `js/modal.js` を作成
+  - [x] `modalInstance`, `currentMode`, `currentCardId`, `currentColumnId` 定義
+  - [x] `initializeModal()` 実装（Bootstrap Modal初期化）
+  - [x] `openAddModal(columnId)` 実装
+  - [x] `closeModal()` 実装
+  - [x] `getModalInput()` 実装
+  - [x] `getModalMode()`, `getCurrentColumnId()` 実装
+- [x] `js/event-handler.js` を作成
+  - [x] `setupAddCardListeners()` 実装（「＋追加」ボタン）
+  - [x] `setupModalFormListener()` 実装（フォーム送信）
+  - [x] `handleModalSubmit()` 実装（addモードのみ）
+  - [x] `handleAddCard(content)` 実装（try-catch、addCard + renderColumnCards + closeModal + showMessage）
+  - [x] `setupModalCancelListener()` 実装
+  - [x] `setupEventListeners()` 実装（上記を呼び出し）
+- [x] `js/app.js` を作成
+  - [x] IIFE構造
+  - [x] `initializeApp()` 実装（initializeData, initializeModal, renderAllCards, setupEventListeners）
+  - [x] `DOMContentLoaded` で初期化
+- [x] `index.html` に `<script>` タグを追加（ui-renderer, modal, event-handler, app）
+- [x] `index.html` からダミーカードを削除
 - [ ] **動作確認**: 「＋追加」ボタンをクリックしてモーダルが開く
 - [ ] **動作確認**: テキストを入力して保存するとカードが追加され、画面に表示される
 - [ ] **動作確認**: ページリロード後もカードが残っている
