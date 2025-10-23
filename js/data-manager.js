@@ -350,3 +350,70 @@ function updateCard(cardId, newContent) {
   // これにより、効率的なカード再描画が可能（renderColumnCards(card.columnId)を直接呼べる）
   return card;
 }
+
+/**
+ * カードを削除する
+ * カードを検索してcardsData配列から削除し、localStorageに保存する
+ *
+ * 実装フロー:
+ * 1. カード検索（cardIdでcardsDataから検索）
+ * 2. カードが見つからない場合はエラーをスロー
+ * 3. 削除前にカードオブジェクトを保存（戻り値として使用）
+ * 4. cardsData.splice(index, 1)でカードを削除
+ * 5. saveToStorage(cardsData)でlocalStorageに保存
+ * 6. 削除されたカードオブジェクトを返す
+ *
+ * @param {string} cardId - 削除対象のカードID
+ * @returns {Object} 削除されたカードオブジェクト（columnIdを含む）
+ * @throws {Error} カードが見つからない場合
+ *
+ * 使用例:
+ * try {
+ *   const deletedCard = deleteCard('card-123-abc');
+ *   console.log('カード削除成功:', deletedCard);
+ *   console.log('カラムID:', deletedCard.columnId);
+ * } catch (error) {
+ *   console.error('カード削除失敗:', error.message);
+ * }
+ *
+ * エラー例:
+ * - Error: カードが見つかりません（カードIDが存在しない場合）
+ *
+ * 注意:
+ * - この関数は例外を投げる可能性がある（カードが見つからない、localStorage保存エラー）
+ * - 呼び出し側でtry-catchでエラーハンドリングを行うこと（Task 6で実装）
+ * - 削除されたカードオブジェクトを返すため、呼び出し側でcolumnIdを取得可能
+ * - これにより、getAllCards()で再検索する必要がなくなり、効率的
+ */
+function deleteCard(cardId) {
+  // 1. カード検索（cardIdでcardsDataから検索）
+  // findIndex()メソッドで条件に一致する最初の要素のインデックスを取得
+  // 見つからない場合は-1が返る
+  const index = cardsData.findIndex(c => c.id === cardId);
+
+  // 2. カードが見つからない場合はエラーをスロー
+  // findIndex()が-1を返した場合、カードが存在しない
+  if (index === -1) {
+    throw new Error('カードが見つかりません');
+  }
+
+  // 3. 削除前にカードオブジェクトを保存（戻り値として使用）
+  // splice()で削除する前に、削除対象のカードオブジェクトを保存
+  // 呼び出し側でcolumnIdを取得できるようにするため
+  const deletedCard = cardsData[index];
+
+  // 4. cardsData.splice(index, 1)でカードを削除
+  // splice(index, 1): indexの位置から1つの要素を削除
+  // 例: [a, b, c, d] から b (index=1) を削除 → [a, c, d]
+  cardsData.splice(index, 1);
+
+  // 5. saveToStorage(cardsData)でlocalStorageに保存
+  // saveToStorage() はTask 2で実装済み
+  // localStorage容量制限超過時は例外が発生する（そのまま投げる）
+  saveToStorage(cardsData);
+
+  // 6. 削除されたカードオブジェクトを返す
+  // 呼び出し側でcolumnIdを取得できるため、getAllCards()で再検索する必要がない
+  // これにより、効率的なカード再描画が可能（renderColumnCards(deletedCard.columnId)を直接呼べる）
+  return deletedCard;
+}
