@@ -262,3 +262,91 @@ function getCardsByColumn(columnId) {
   // filter()は新しい配列を返すため、元データは変更されない
   return cardsData.filter(card => card.columnId === columnId);
 }
+
+/**
+ * カードを更新する
+ * バリデーションを行い、カードの内容とupdatedAtを更新してlocalStorageに保存する
+ *
+ * 実装フロー:
+ * 1. バリデーション（空文字チェック）
+ * 2. バリデーション（500文字制限チェック）
+ * 3. カード検索（cardIdでcardsDataから検索）
+ * 4. カードが見つからない場合はエラーをスロー
+ * 5. カードのcontentプロパティを更新
+ * 6. カードのupdatedAtプロパティを更新
+ * 7. saveToStorage(cardsData)でlocalStorageに保存
+ * 8. 更新されたカードオブジェクトを返す
+ *
+ * @param {string} cardId - 更新対象のカードID
+ * @param {string} newContent - 新しいカード内容
+ * @returns {Object} 更新されたカードオブジェクト（columnIdを含む）
+ * @throws {Error} バリデーションエラーまたは保存エラー
+ *
+ * 使用例:
+ * try {
+ *   const updatedCard = updateCard('card-123-abc', '更新後のタスク');
+ *   console.log('カード更新成功:', updatedCard);
+ *   console.log('カラムID:', updatedCard.columnId);
+ * } catch (error) {
+ *   console.error('カード更新失敗:', error.message);
+ * }
+ *
+ * エラー例:
+ * - Error: カードの内容を入力してください（空文字の場合）
+ * - Error: カードの内容は500文字以内で入力してください（500文字超過の場合）
+ * - Error: カードが見つかりません（カードIDが存在しない場合）
+ *
+ * 注意:
+ * - この関数は例外を投げる可能性がある（バリデーションエラー、localStorage保存エラー）
+ * - 呼び出し側でtry-catchでエラーハンドリングを行うこと（Task 5で実装）
+ * - 更新されたカードオブジェクトを返すため、呼び出し側でcolumnIdを取得可能
+ * - これにより、getAllCards()で再検索する必要がなくなり、効率的
+ */
+function updateCard(cardId, newContent) {
+  // 前処理: trim()で前後の空白を削除
+  // バリデーションと保存で同じ値を使用するため、最初に計算する
+  // addCard()と同じパターンでバリデーションと実際に保存される内容を一致させる
+  const trimmedContent = newContent ? newContent.trim() : '';
+
+  // 1. バリデーション（空文字チェック）
+  // newContentがnull、undefined、空文字、または空白文字のみの場合はエラー
+  // trim後の文字列でチェックすることで、実際に保存される内容と一致させる
+  if (!newContent || trimmedContent.length === 0) {
+    throw new Error('カードの内容を入力してください');
+  }
+
+  // 2. バリデーション（500文字制限チェック）
+  // trim後の文字列の長さでチェック
+  // これにより、実際に保存される内容が500文字以内であることを保証
+  if (trimmedContent.length > 500) {
+    throw new Error('カードの内容は500文字以内で入力してください');
+  }
+
+  // 3. カード検索（cardIdでcardsDataから検索）
+  // find()メソッドで条件に一致する最初の要素を取得
+  // 見つからない場合はundefinedが返る
+  const card = cardsData.find(c => c.id === cardId);
+
+  // 4. カードが見つからない場合はエラーをスロー
+  if (!card) {
+    throw new Error('カードが見つかりません');
+  }
+
+  // 5. カードのcontentプロパティを更新
+  // trimmedContentを使用（バリデーションと同じ値）
+  card.content = trimmedContent;
+
+  // 6. カードのupdatedAtプロパティを更新
+  // 現在のタイムスタンプを設定（Unixタイムスタンプ、ミリ秒単位）
+  card.updatedAt = Date.now();
+
+  // 7. saveToStorage(cardsData)でlocalStorageに保存
+  // saveToStorage() はTask 2で実装済み
+  // localStorage容量制限超過時は例外が発生する（そのまま投げる）
+  saveToStorage(cardsData);
+
+  // 8. 更新されたカードオブジェクトを返す
+  // 呼び出し側でcolumnIdを取得できるため、getAllCards()で再検索する必要がない
+  // これにより、効率的なカード再描画が可能（renderColumnCards(card.columnId)を直接呼べる）
+  return card;
+}
