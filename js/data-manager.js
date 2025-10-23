@@ -219,3 +219,46 @@ function addCard(content, columnId) {
   // 正常に追加・保存された場合、何も返さない（undefinedを返す）
   // エラーが発生した場合は、上記のthrow文で例外を投げる
 }
+
+/**
+ * すべてのカードデータを取得する
+ * UI層からすべてのカードデータにアクセスできるようにするゲッター関数
+ *
+ * @returns {Array} すべてのカードオブジェクトの配列
+ *
+ * 使用例:
+ * const cards = getAllCards();
+ * console.log(cards); // [{ id: '...', content: '...', columnId: '...' }, ...]
+ *
+ * 注意:
+ * - 配列の参照を返すため、呼び出し側で変更すると元データも変わる
+ * - 現時点ではパフォーマンスを優先して参照を返す（将来的にコピーを返すことも検討可能）
+ * - カード検索（編集・削除時）に使用される（Task 5, 6で使用）
+ */
+function getAllCards() {
+  // cardsData配列をそのまま返す
+  // モジュールスコープの変数にアクセスするゲッター関数
+  return cardsData;
+}
+
+/**
+ * 指定されたカラムのカードデータを取得する
+ * 特定のカラムに表示するカードのみを取得する
+ *
+ * @param {string} columnId - カラムID（\"todo\" | \"inprogress\" | \"done\"）
+ * @returns {Array} 指定されたカラムのカードオブジェクトの配列
+ *
+ * 使用例:
+ * const todoCards = getCardsByColumn('todo');
+ * console.log(todoCards); // [{ id: '...', content: '...', columnId: 'todo' }, ...]
+ *
+ * 注意:
+ * - filter()は新しい配列を返すため、呼び出し側での変更は元データに影響しない
+ * - バリデーションは行わない（呼び出し側で適切なIDを渡す前提）
+ * - カード表示時（renderColumnCards()）に使用される（Task 4で実装）
+ */
+function getCardsByColumn(columnId) {
+  // cardsData.filter()でcolumnIdが一致するカードのみを抽出
+  // filter()は新しい配列を返すため、元データは変更されない
+  return cardsData.filter(card => card.columnId === columnId);
+}

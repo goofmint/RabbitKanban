@@ -43,37 +43,7 @@
             </div>
             <!-- カードリスト領域: data-column-id属性でこのカラムを識別、JavaScriptでカードを追加 -->
             <div class="card-body card-list" data-column-id="todo">
-              <!-- ダミーカード1 -->
-              <div class="card mb-2 kanban-card" draggable="true">
-                <div class="card-body p-2">
-                  <p class="card-content mb-2 small">ダミータスク1: デザインを確認する</p>
-                  <div class="d-flex justify-content-end gap-1">
-                    <!-- 編集ボタン: Iconifyのアイコン使用（Task 6で実装） -->
-                    <button class="btn btn-sm btn-outline-secondary edit-btn" aria-label="編集">
-                      <span class="iconify" data-icon="lucide:edit" data-width="16" data-height="16"></span>
-                    </button>
-                    <!-- 削除ボタン: Iconifyのアイコン使用（Task 6で実装） -->
-                    <button class="btn btn-sm btn-outline-danger delete-btn" aria-label="削除">
-                      <span class="iconify" data-icon="lucide:trash-2" data-width="16" data-height="16"></span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <!-- ダミーカード2 -->
-              <div class="card mb-2 kanban-card" draggable="true">
-                <div class="card-body p-2">
-                  <p class="card-content mb-2 small">ダミータスク2: レイアウトを確認する</p>
-                  <div class="d-flex justify-content-end gap-1">
-                    <button class="btn btn-sm btn-outline-secondary edit-btn" aria-label="編集">
-                      <span class="iconify" data-icon="lucide:edit" data-width="16" data-height="16"></span>
-                    </button>
-                    <button class="btn btn-sm btn-outline-danger delete-btn" aria-label="削除">
-                      <span class="iconify" data-icon="lucide:trash-2" data-width="16" data-height="16"></span>
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <!-- カードはJavaScriptで動的に生成される（Task 4で実装） -->
             </div>
           </div>
         </div>
@@ -87,20 +57,7 @@
               <button class="btn btn-sm btn-dark add-card-btn" data-column-id="inprogress">＋追加</button>
             </div>
             <div class="card-body card-list" data-column-id="inprogress">
-              <!-- ダミーカード3 -->
-              <div class="card mb-2 kanban-card" draggable="true">
-                <div class="card-body p-2">
-                  <p class="card-content mb-2 small">ダミータスク3: 実装を進める</p>
-                  <div class="d-flex justify-content-end gap-1">
-                    <button class="btn btn-sm btn-outline-secondary edit-btn" aria-label="編集">
-                      <span class="iconify" data-icon="lucide:edit" data-width="16" data-height="16"></span>
-                    </button>
-                    <button class="btn btn-sm btn-outline-danger delete-btn" aria-label="削除">
-                      <span class="iconify" data-icon="lucide:trash-2" data-width="16" data-height="16"></span>
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <!-- カードはJavaScriptで動的に生成される（Task 4で実装） -->
             </div>
           </div>
         </div>
@@ -114,35 +71,7 @@
               <button class="btn btn-sm btn-light add-card-btn" data-column-id="done">＋追加</button>
             </div>
             <div class="card-body card-list" data-column-id="done">
-              <!-- ダミーカード4 -->
-              <div class="card mb-2 kanban-card" draggable="true">
-                <div class="card-body p-2">
-                  <p class="card-content mb-2 small">ダミータスク4: テストを完了する</p>
-                  <div class="d-flex justify-content-end gap-1">
-                    <button class="btn btn-sm btn-outline-secondary edit-btn" aria-label="編集">
-                      <span class="iconify" data-icon="lucide:edit" data-width="16" data-height="16"></span>
-                    </button>
-                    <button class="btn btn-sm btn-outline-danger delete-btn" aria-label="削除">
-                      <span class="iconify" data-icon="lucide:trash-2" data-width="16" data-height="16"></span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <!-- ダミーカード5 -->
-              <div class="card mb-2 kanban-card" draggable="true">
-                <div class="card-body p-2">
-                  <p class="card-content mb-2 small">ダミータスク5: デプロイする</p>
-                  <div class="d-flex justify-content-end gap-1">
-                    <button class="btn btn-sm btn-outline-secondary edit-btn" aria-label="編集">
-                      <span class="iconify" data-icon="lucide:edit" data-width="16" data-height="16"></span>
-                    </button>
-                    <button class="btn btn-sm btn-outline-danger delete-btn" aria-label="削除">
-                      <span class="iconify" data-icon="lucide:trash-2" data-width="16" data-height="16"></span>
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <!-- カードはJavaScriptで動的に生成される（Task 4で実装） -->
             </div>
           </div>
         </div>
@@ -217,12 +146,20 @@
   <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
 
   <!-- Kanban App JavaScript -->
-  <!-- 読み込み順序が重要: constants → storage → data-manager -->
+  <!-- 読み込み順序が重要: constants → storage → data-manager → ui-renderer → modal → event-handler → app -->
   <!-- constants.js: 他のファイルで使用する定数を定義（STORAGE_KEY, COLUMNS） -->
   <script src="js/constants.js"></script>
   <!-- storage.js: localStorage操作（STORAGE_KEYを使用） -->
   <script src="js/storage.js"></script>
   <!-- data-manager.js: データ管理（COLUMNSを使用、loadFromStorage/saveToStorageを呼び出す） -->
   <script src="js/data-manager.js"></script>
+  <!-- ui-renderer.js: カード表示ロジック（renderAllCards, renderColumnCards, createCardElement, showMessage） -->
+  <script src="js/ui-renderer.js"></script>
+  <!-- modal.js: モーダル管理（initializeModal, openAddModal, closeModal, getModalInput等） -->
+  <script src="js/modal.js"></script>
+  <!-- event-handler.js: イベント処理（setupEventListeners, handleAddCard等） -->
+  <script src="js/event-handler.js"></script>
+  <!-- app.js: アプリ初期化（initializeApp, DOMContentLoaded） -->
+  <script src="js/app.js"></script>
 </body>
 </html>
