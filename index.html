@@ -34,7 +34,7 @@
 
         <!-- To Do カラム -->
         <div class="col-12 col-md-4">
-          <div class="card">
+          <div class="card kanban-column" data-column-id="todo">
             <!-- カラムヘッダー: プライマリカラー（青）、タイトルと追加ボタンを横並び配置 -->
             <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
               <h5 class="mb-0">To Do</h5>
@@ -50,7 +50,7 @@
 
         <!-- In Progress カラム -->
         <div class="col-12 col-md-4">
-          <div class="card">
+          <div class="card kanban-column" data-column-id="inprogress">
             <!-- カラムヘッダー: 警告カラー（黄）、タイトルと追加ボタンを横並び配置 -->
             <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
               <h5 class="mb-0">In Progress</h5>
@@ -64,7 +64,7 @@
 
         <!-- Done カラム -->
         <div class="col-12 col-md-4">
-          <div class="card">
+          <div class="card kanban-column" data-column-id="done">
             <!-- カラムヘッダー: 成功カラー（緑）、タイトルと追加ボタンを横並び配置 -->
             <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
               <h5 class="mb-0">Done</h5>
@@ -146,7 +146,7 @@
   <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
 
   <!-- Kanban App JavaScript -->
-  <!-- 読み込み順序が重要: constants → storage → data-manager → ui-renderer → modal → event-handler → app -->
+  <!-- 読み込み順序が重要: constants → storage → data-manager → ui-renderer → modal → event-handler → drag-handler → app -->
   <!-- constants.js: 他のファイルで使用する定数を定義（STORAGE_KEY, COLUMNS） -->
   <script src="js/constants.js"></script>
   <!-- storage.js: localStorage操作（STORAGE_KEYを使用） -->
@@ -159,6 +159,8 @@
   <script src="js/modal.js"></script>
   <!-- event-handler.js: イベント処理（setupEventListeners, handleAddCard等） -->
   <script src="js/event-handler.js"></script>
+  <!-- drag-handler.js: ドラッグ&ドロップ処理（setupDragAndDropListeners, handleDragStart, handleDrop等） -->
+  <script src="js/drag-handler.js"></script>
   <!-- app.js: アプリ初期化（initializeApp, DOMContentLoaded） -->
   <script src="js/app.js"></script>
 </body>
