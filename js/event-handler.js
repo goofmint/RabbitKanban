@@ -529,7 +529,7 @@ function setupCardActionListeners() {
  *
  * 注意:
  * - app.jsからシンプルに呼び出せるようにする
- * - setupDragAndDropListeners()は今後のタスクで追加
+ * - setupDragAndDropListeners()はTask 7で実装（drag-handler.js）
  */
 function setupEventListeners() {
   // 以下の関数を順次呼び出す:
@@ -543,9 +543,9 @@ function setupEventListeners() {
   // モーダルのキャンセルボタンイベントリスナー設定
   setupModalCancelListener();
 
-  // カードのアクションボタン（編集・削除）のイベントリスナー設定（Task 5で実装）
+  // カードのアクションボタン（編集・削除）のイベントリスナー設定（Task 5, 6で実装）
   setupCardActionListeners();
 
-  // 注: 以下のイベントリスナーは今後のタスクで追加
-  // - setupDragAndDropListeners() (Task 7で実装: D&D)
+  // ドラッグ&ドロップのイベントリスナー設定（Task 7で実装、drag-handler.js）
+  setupDragAndDropListeners();
 }

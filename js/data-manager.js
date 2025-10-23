@@ -417,3 +417,83 @@ function deleteCard(cardId) {
   // これにより、効率的なカード再描画が可能（renderColumnCards(deletedCard.columnId)を直接呼べる）
   return deletedCard;
 }
+
+/**
+ * カードを別のカラムに移動する
+ * カードのcolumnIdを更新してlocalStorageに保存する
+ *
+ * 実装フロー:
+ * 1. isValidColumnId(newColumnId)でカラムIDの妥当性を検証
+ * 2. カラムIDが不正な場合はエラーをスロー
+ * 3. cardsData配列からcardIdに一致するカードを検索
+ * 4. カードが見つからない場合はエラーをスロー
+ * 5. カードのcolumnIdをnewColumnIdに更新
+ * 6. カードのupdatedAtを現在日時に更新
+ * 7. saveToStorage(cardsData)でlocalStorageに保存
+ * 8. 更新されたカードオブジェクトを返す
+ *
+ * @param {string} cardId - 移動対象のカードID
+ * @param {string} newColumnId - 移動先のカラムID（'todo' | 'inprogress' | 'done'）
+ * @returns {Object} 移動されたカードオブジェクト
+ * @throws {Error} バリデーションエラーまたはカードが見つからない場合
+ *
+ * 使用例:
+ * try {
+ *   const movedCard = moveCard('card-123-abc', 'inprogress');
+ *   console.log('カード移動成功:', movedCard);
+ *   console.log('新しいカラムID:', movedCard.columnId);
+ * } catch (error) {
+ *   console.error('カード移動失敗:', error.message);
+ * }
+ *
+ * エラー例:
+ * - Error: カラムIDが不正です（不正なカラムIDの場合）
+ * - Error: カードが見つかりません（カードIDが存在しない場合）
+ *
+ * 注意:
+ * - この関数は例外を投げる可能性がある（バリデーションエラー、localStorage保存エラー）
+ * - 呼び出し側でtry-catchでエラーハンドリングを行うこと（Task 7で実装）
+ * - 移動されたカードオブジェクトを返すため、呼び出し側で再検索不要
+ * - これにより、効率的なカード再描画が可能
+ */
+function moveCard(cardId, newColumnId) {
+  // 1. isValidColumnId(newColumnId)でカラムIDの妥当性を検証
+  // COLUMNS配列に定義されているIDのみ有効
+  // isValidColumnId() はTask 2で実装済み
+  if (!isValidColumnId(newColumnId)) {
+    // 2. カラムIDが不正な場合はエラーをスロー
+    // 不正なカラムID（'todo', 'inprogress', 'done'以外）の場合
+    throw new Error('カラムIDが不正です');
+  }
+
+  // 3. cardsData配列からcardIdに一致するカードを検索
+  // find()メソッドで条件に一致する最初の要素を取得
+  // 見つからない場合はundefinedが返る
+  const card = cardsData.find(c => c.id === cardId);
+
+  // 4. カードが見つからない場合はエラーをスロー
+  // find()がundefinedを返した場合、カードが存在しない
+  if (!card) {
+    throw new Error('カードが見つかりません');
+  }
+
+  // 5. カードのcolumnIdをnewColumnIdに更新
+  // カードオブジェクトのcolumnIdプロパティを直接更新
+  // これにより、カードが新しいカラムに移動する
+  card.columnId = newColumnId;
+
+  // 6. カードのupdatedAtを現在日時に更新
+  // 現在のタイムスタンプを設定（Unixタイムスタンプ、ミリ秒単位）
+  // これにより、カードが最後に更新された日時を記録できる
+  card.updatedAt = Date.now();
+
+  // 7. saveToStorage(cardsData)でlocalStorageに保存
+  // saveToStorage() はTask 2で実装済み
+  // localStorage容量制限超過時は例外が発生する（そのまま投げる）
+  saveToStorage(cardsData);
+
+  // 8. 更新されたカードオブジェクトを返す
+  // 呼び出し側で再検索する必要がない（効率的）
+  // renderAllCards()を呼び出すための情報として使用可能
+  return card;
+}
