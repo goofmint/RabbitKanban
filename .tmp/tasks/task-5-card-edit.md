@@ -22,7 +22,7 @@
 - `cardId` (string): 更新対象のカードID
 - `newContent` (string): 新しいカード内容
 
-**戻り値**: なし
+**戻り値**: 更新されたカードオブジェクト（`columnId`を含む）
 
 **処理内容**:
 1. `newContent`のバリデーションを実施
@@ -33,7 +33,8 @@
 4. カードの`content`プロパティを`newContent`で更新
 5. カードの`updatedAt`プロパティを現在日時で更新
 6. `saveToStorage(cardsData)`を呼び出して永続化
-7. エラーが発生した場合は`throw new Error()`でエラーメッセージを投げる
+7. 更新されたカードオブジェクトを返す
+8. エラーが発生した場合は`throw new Error()`でエラーメッセージを投げる
 
 **エラーケース**:
 - カード内容が空文字列の場合
@@ -104,13 +105,15 @@
 
 **処理内容**:
 1. `getCurrentCardId()`で編集対象のカードIDを取得
-2. `try-catch`ブロック内で以下を実行:
-   - `updateCard(cardId, newContent)`を呼び出してカードを更新
-   - 更新されたカードが属するカラムを特定するため、`getAllCards()`でカードデータを取得
-   - カードの`columnId`を使用して`renderColumnCards(columnId)`を呼び出し、該当カラムを再描画
+2. カードIDが`null`の場合、エラーメッセージを表示して早期リターン
+   - `showMessage('カードが選択されていません', 'danger')`を呼び出す
+   - 処理を終了
+3. `try-catch`ブロック内で以下を実行:
+   - `updateCard(cardId, newContent)`を呼び出してカードを更新し、更新されたカードオブジェクトを取得
+   - 更新されたカードの`columnId`を使用して`renderColumnCards(columnId)`を呼び出し、該当カラムを再描画
    - `closeModal()`でモーダルを閉じる
    - `showMessage('カードを更新しました', 'success')`で成功メッセージを表示
-3. エラーが発生した場合:
+4. エラーが発生した場合:
    - `showMessage(error.message, 'danger')`でエラーメッセージを表示
 
 #### `setupCardActionListeners()`
@@ -157,14 +160,17 @@
 5. handleModalSubmit() が呼ばれる
     ↓
 6. handleEditCard(newContent) が実行される
+    - getCurrentCardId() でカードIDを取得
+    - カードIDがnullの場合は早期リターン
     ↓
 7. updateCard(cardId, newContent) でデータを更新
     - バリデーション
     - cardsData配列内のカードを更新
     - updatedAtを更新
     - localStorageに保存
+    - 更新されたカードオブジェクト（columnIdを含む）を返す
     ↓
-8. renderColumnCards(columnId) で該当カラムを再描画
+8. 返されたカードの columnId を使用して renderColumnCards(columnId) で該当カラムを再描画
     ↓
 9. closeModal() でモーダルを閉じる
     ↓
