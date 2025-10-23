@@ -189,18 +189,18 @@
 
 **番号**: #6
 
-- [ ] `js/data-manager.js` に追加
-  - [ ] `deleteCard(cardId)` 実装
+- [x] `js/data-manager.js` に追加
+  - [x] `deleteCard(cardId)` 実装
     - カード検索
     - `cardsData.splice()`で削除
     - `saveToStorage(cardsData)`
     - エラーは `throw new Error()`
-- [ ] `js/event-handler.js` に追加
-  - [ ] `handleDeleteCard(cardId)` 実装（confirm + try-catch、getAllCards→カード検索→deleteCard + renderColumnCards + showMessage）
-  - [ ] `setupCardActionListeners()` を更新（削除ボタンに対応）
-- [ ] **動作確認**: カードの「🗑️」ボタンをクリックして確認ダイアログが表示される
-- [ ] **動作確認**: OKをクリックするとカードが削除される
-- [ ] **動作確認**: リロード後も削除されたまま
+- [x] `js/event-handler.js` に追加
+  - [x] `handleDeleteCard(cardId)` 実装（confirm + try-catch、getAllCards→カード検索→deleteCard + renderColumnCards + showMessage）
+  - [x] `setupCardActionListeners()` を更新（削除ボタンに対応）
+- [x] **動作確認**: カードの「🗑️」ボタンをクリックして確認ダイアログが表示される
+- [x] **動作確認**: OKをクリックするとカードが削除される
+- [x] **動作確認**: リロード後も削除されたまま
 
 **完了条件**: カード削除機能が完全に動作する
 
