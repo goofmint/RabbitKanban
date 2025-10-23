@@ -285,6 +285,83 @@ function handleEditCard(newContent) {
 }
 
 /**
+ * カード削除処理を実行する
+ * 確認ダイアログを表示し、OKの場合のみカードを削除する
+ *
+ * @param {string} cardId - 削除対象のカードID
+ *
+ * 実装フロー:
+ * 1. window.confirm()で確認ダイアログを表示
+ * 2. ユーザーがキャンセルした場合は処理を終了（早期リターン）
+ * 3. try-catch でエラーハンドリング
+ * 4. try内:
+ *    - deleteCard(cardId)を呼び出してカードを削除し、削除されたカードオブジェクトを取得
+ *    - 削除されたカードのcolumnIdを使用してrenderColumnCards(columnId)でカラムを再描画
+ *    - showMessage('カードを削除しました', 'success')で成功メッセージ表示
+ * 5. catch内:
+ *    - showMessage(error.message, 'danger')でエラーメッセージ表示
+ *
+ * 使用例:
+ * handleDeleteCard('card-123-abc');
+ * // 確認ダイアログが表示され、OKをクリックするとカードが削除される
+ *
+ * エラー例:
+ * - カードが見つからない: 「カードが見つかりません」
+ * - 保存エラー: localStorage容量超過等
+ *
+ * 注意:
+ * - データ層（deleteCard()）とUI層を接続
+ * - 確認ダイアログでキャンセルした場合は何もしない
+ * - 成功時は成功メッセージ表示
+ * - エラー時はエラーメッセージ表示
+ * - deleteCard()が削除されたカードオブジェクトを返すため、getAllCards()で再検索不要
+ * - これにより、効率的なカード再描画が可能
+ */
+function handleDeleteCard(cardId) {
+  // 1. window.confirm()で確認ダイアログを表示
+  // ユーザーに削除の意図を確認する
+  // confirm()は、OKをクリックすると true、キャンセルをクリックすると false を返す
+  const confirmed = window.confirm('このカードを削除しますか？');
+
+  // 2. ユーザーがキャンセルした場合は処理を終了（早期リターン）
+  // confirmed が false の場合、カードを削除せずに処理を終了
+  if (!confirmed) {
+    // 何もせずに処理を終了
+    return;
+  }
+
+  // 3. try-catch でエラーハンドリング
+  try {
+    // 4. try内: カード削除処理
+
+    // deleteCard(cardId)を呼び出してカードを削除し、削除されたカードオブジェクトを取得
+    // data-manager.jsで定義されている関数を呼び出す
+    // カードが見つからない場合やlocalStorage保存エラーが発生した場合、例外が投げられる
+    // 削除されたカードオブジェクト（columnIdを含む）が返される
+    const deletedCard = deleteCard(cardId);
+
+    // 削除されたカードのcolumnIdを使用してrenderColumnCards(columnId)でカラムを再描画
+    // ui-renderer.jsで定義されている関数を呼び出す
+    // 削除されたカードが画面から消える
+    // deletedCard.columnIdを使用することで、getAllCards()で再検索する必要がない（効率的）
+    renderColumnCards(deletedCard.columnId);
+
+    // showMessage('カードを削除しました', 'success')で成功メッセージ表示
+    // ui-renderer.jsで定義されている関数を呼び出す
+    // 緑色のBootstrap alertが3秒間表示される
+    showMessage('カードを削除しました', 'success');
+
+  } catch (error) {
+    // 5. catch内: エラー処理
+
+    // showMessage(error.message, 'danger')でエラーメッセージ表示
+    // ui-renderer.jsで定義されている関数を呼び出す
+    // 赤色のBootstrap alertが3秒間表示される
+    showMessage(error.message, 'danger');
+  }
+}
+
+/**
  * モーダルのキャンセルボタンのクリックイベントリスナーを設定する
  * キャンセルボタンクリック時にモーダルを閉じる
  *
@@ -334,17 +411,21 @@ function setupModalCancelListener() {
  *    - カード要素（.kanban-card）を取得
  *    - data-card-id属性からカードIDを取得
  *    - openEditModal(cardId)を呼び出してモーダルを開く
- * 5. 削除ボタンの場合は何もしない（Task 6で実装）
+ * 5. クリックされた要素またはその親が削除ボタン（.delete-btn）かチェック
+ * 6. 削除ボタンの場合:
+ *    - カード要素（.kanban-card）を取得
+ *    - data-card-id属性からカードIDを取得
+ *    - handleDeleteCard(cardId)を呼び出す
  *
  * 使用例:
  * setupCardActionListeners();
- * // すべてのカードの編集ボタンにイベントリスナーが設定される
+ * // すべてのカードの編集・削除ボタンにイベントリスナーが設定される
  *
  * 注意:
  * - イベントデリゲーションを使用（親要素にイベントリスナーを設定）
  * - 動的に追加されるカードにも対応できる
  * - closest()メソッドで最も近い親要素を取得
- * - 削除ボタン（.delete-btn）の処理はTask 6で実装
+ * - 編集ボタン（Task 5）と削除ボタン（Task 6）の両方に対応
  */
 function setupCardActionListeners() {
   // 1. すべてのカラムコンテナ（.card-list）を取得
@@ -395,11 +476,40 @@ function setupCardActionListeners() {
         return;
       }
 
-      // 5. 削除ボタンの場合は何もしない（Task 6で実装）
-      // const deleteButton = target.closest('.delete-btn');
-      // if (deleteButton) {
-      //   // Task 6でhandleDeleteCard()を呼び出す
-      // }
+      // 5. クリックされた要素またはその親が削除ボタン（.delete-btn）かチェック
+      // closest()メソッドで最も近い親要素を取得
+      // ボタン内のアイコンがクリックされた場合も、closest()で親のボタン要素を取得できる
+      const deleteButton = target.closest('.delete-btn');
+
+      // 6. 削除ボタンの場合の処理
+      if (deleteButton) {
+        // カード要素（.kanban-card）を取得
+        // closest()メソッドで最も近い親の.kanban-card要素を取得
+        const cardElement = deleteButton.closest('.kanban-card');
+
+        // カード要素が見つからない場合は処理を中断
+        if (!cardElement) {
+          console.error('カード要素が見つかりません');
+          return;
+        }
+
+        // data-card-id属性からカードIDを取得
+        // dataset.cardId で data-card-id 属性の値を取得
+        const cardId = cardElement.dataset.cardId;
+
+        // カードIDが取得できない場合は処理を中断
+        if (!cardId) {
+          console.error('カードIDが取得できません');
+          return;
+        }
+
+        // handleDeleteCard(cardId)を呼び出す
+        // 確認ダイアログを表示し、OKの場合のみカードを削除する
+        handleDeleteCard(cardId);
+
+        // 処理を終了（他のイベントハンドラーに伝播しない）
+        return;
+      }
     });
   });
 }
